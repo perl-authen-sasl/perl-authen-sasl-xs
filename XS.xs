@@ -1193,7 +1193,7 @@ by the underlying mechanism. An example service therefore is "ldap".
 
 
 Authen_SASL_XS
-server_new(pkg, parent, service, host = NULL, iplocalport=NULL, ipremoteport=NULL ...)
+server_new(pkg, parent, service, host = NULL, iplocalport=NULL, ipremoteport=NULL, ...)
 	char *pkg
 	SV *parent
 	char *service
@@ -1263,7 +1263,7 @@ See SYNOPSIS for an example.
 =cut
 
 Authen_SASL_XS
-client_new(pkg, parent, service, host, iplocalport = NULL, ipremoteport = NULL...)
+client_new(pkg, parent, service, host, iplocalport = NULL, ipremoteport = NULL, ...)
     char *pkg
     SV *parent
     char *service
