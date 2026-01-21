@@ -1,7 +1,9 @@
 
 use strict;
 use Authen::SASL qw(XS); # Only use XS plugin
-use Test::Simple tests => 5;
+use Test::Simple tests => 6;
+
+ok( $ENV{USER}, '$ENV{USER} must be defined for the following tests' );
 
 our $me;
 require "t/common.pl";

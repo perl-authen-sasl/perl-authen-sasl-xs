@@ -1,3 +1,5 @@
+use strict;
+use warnings;
 #
 # Add SASL encoding/decoding to a filehandle
 #

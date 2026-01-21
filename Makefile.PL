@@ -1,14 +1,18 @@
-# Do yourself a favour, and don't edit this file, see README for build instructions
+# Dist::Zilla::Plugin::MakeMaker::Awesome 0.49.
+# Don't edit it but the dist.ini and plugins used to construct it.
 
-use lib 'inc';
+use strict;
+use warnings;
+
+use 5.008;
 use ExtUtils::MakeMaker;
+
 use Devel::CheckLib;
 
 my @inc_search = qw(/opt/local/include /usr/local/include);
 my @lib_search = qw(/opt/local/lib64 /usr/local/lib64 /opt/local/lib /usr/local/lib);
 my %args       = map {/^(\w+)=(.*)/} grep {/^\w+=/} @ARGV;
 my $use_sasl2  = exists $args{DEFINE} and $args{DEFINE} =~ /-DSASL2/;
-my %mmopt;
 
 unless (exists $args{INC} or exists $args{LIB}) {
 
@@ -25,7 +29,7 @@ unless (exists $args{INC} or exists $args{LIB}) {
   };
 
   if ($have_sasl2) {
-    $mmopt{DEFINE} = "-DSASL2" unless $use_sasl2;
+    $args{DEFINE} = "-DSASL2" unless $use_sasl2;
   }
   else {
     exit(0) if $use_sasl2;
@@ -38,23 +42,57 @@ unless (exists $args{INC} or exists $args{LIB}) {
     );
   }
 
-  $mmopt{INC}  = join " ", map {"-I$_"} @incpath;
-  $mmopt{LIBS} = join " ", map {"-L$_"} @libpath;
-  $mmopt{LIBS} .= $have_sasl2 ? " -lsasl2" : " -lsasl";
+  $args{INC}  = join " ", map {"-I$_"} @incpath;
+  $args{LIBS} = join " ", map {"-L$_"} @libpath;
+  $args{LIBS} .= $have_sasl2 ? " -lsasl2" : " -lsasl";
 }
 
-WriteMakefile(
-  'NAME'         => 'Authen::SASL::XS',
-  'VERSION_FROM' => 'XS.pm',
-  'PREREQ_PM'    => {
-    Test::Simple => 0,
-    Test::More   => 0,
-    Authen::SASL => 2.08,
+my %WriteMakefileArgs = (
+  "ABSTRACT" => "XS code to glue Perl SASL to Cyrus SASL",
+  "AUTHOR" => "Graham Barr <gmbarr\@gmail.com>",
+  "CONFIGURE_REQUIRES" => {
+    "Devel::CheckLib" => 0,
+    "ExtUtils::MakeMaker" => 0
   },
-  %mmopt,
+  "DISTNAME" => "Authen-SASL-XS",
+  "LICENSE" => "perl",
+  "MIN_PERL_VERSION" => "5.008",
+  "NAME" => "Authen::SASL::XS",
+  "PREREQ_PM" => {
+    "Authen::SASL" => "2.08"
+  },
+  "TEST_REQUIRES" => {
+    "Authen::SASL" => "2.08",
+    "Test::More" => 0,
+    "Test::Simple" => 0
+  },
+  "VERSION" => "1.01",
+  "test" => {
+    "TESTS" => "t/*.t"
+  }
 );
 
-package MY;
+%WriteMakefileArgs = (
+    %WriteMakefileArgs,
+    %args,
+);
+
+my %FallbackPrereqs = (
+  "Authen::SASL" => "2.08",
+  "Test::More" => 0,
+  "Test::Simple" => 0
+);
+
+unless ( eval { ExtUtils::MakeMaker->VERSION('6.63_03') } ) {
+  delete $WriteMakefileArgs{TEST_REQUIRES};
+  delete $WriteMakefileArgs{BUILD_REQUIRES};
+  $WriteMakefileArgs{PREREQ_PM} = \%FallbackPrereqs;
+}
+
+delete $WriteMakefileArgs{CONFIGURE_REQUIRES}
+  unless eval { ExtUtils::MakeMaker->VERSION(6.52) };
+
+WriteMakefile(%WriteMakefileArgs);
 
 sub postamble {
   return <<'POD';
@@ -65,26 +103,3 @@ XS.pod: XS.xs
 	- podselect XS.xs > XS.pod
 POD
 }
-
-
-sub metafile {
-  my $self = shift;
-  my $pkg  = ref($self) || $self;
-  my $echo = $self->can('echo');
-
-  # This is not supported by MM, but locally override ->echo to add to META.yml
-  local *{"${pkg}::echo"} = sub {
-    my ($self, $what, $target) = @_;
-    if ($target eq 'META_new.yml') {
-      $what .= <<EXTRA_META;
-no_index:
-  directory:
-    - inc
-    - t
-EXTRA_META
-    }
-    $self->$echo($what, $target);
-  };
-  $self->metafile_target(@_);
-}
-
