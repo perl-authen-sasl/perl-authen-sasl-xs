@@ -1,3 +1,31 @@
+History of updates to Authen::SASL::XS
+
+{{$NEXT}}
+
+1.01 -- Tue Jan 20 20:48:28 AST 2026
+
+  [Significant Updates since 1.00]
+  * New COMAINT (thanks Graham and Erik)
+  * Fix an issue building due to ExtUtils::ParseXS 3.57 (@gregoa) 
+  * Packaging changes (move to Dist::Zilla)
+  * Fix compiler warnings
+
+  [Detailed Change Log]
+  * c1a6726 Add a security policy document
+  * 2ef6780 Add myself as the maintainer
+  * c411072 Add use strict and warnings
+  * 7911147 Add words to ignore spelling
+  * e81b99e $ENV{USER} must be defined for the following tests
+  * 28c8529 Move the build process to Dist::Zilla
+  * 15157aa Fix syntax. Perl 5.42 / ExtUtils::ParseXS 3.57
+  * 32b829b Fix incompatible type warnings
+
+1.00 - Wed Sep 23 19:50:00 CDT 2009
+  * Initial release as Authen::SASL::XS
+  * Fix return value for WRITE (Authen::SASL::XS::Security)
+  * Avoid exceeding SASL buffer size (Authen::SASL::XS::Security)
+  * Use Devel::CheckLib during build to find sasl libraries
+
 History of updates to Authen::SASL::Cyrus
 
 0.13-server
