@@ -7,7 +7,7 @@ require Exporter;
 
 our @ISA = qw(DynaLoader);
 
-our $VERSION = "1.01";
+our $VERSION = "1.02";
 
 # ABSTRACT: XS code to glue Perl SASL to Cyrus SASL
 
