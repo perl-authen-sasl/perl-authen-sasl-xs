@@ -12,4 +12,5 @@ cover_db
 XS.bs
 XS.c
 XS.o
+Release-*
 
